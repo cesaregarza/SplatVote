@@ -1,0 +1,97 @@
+x-api-env: &api_env
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  DB_USER: ${DB_USER:-postgres}
+  DB_PASSWORD: ${DB_PASSWORD:-postgres}
+  DB_NAME: ${DB_NAME:-splattop}
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  DEV_MODE: "true"
+  SYNC_ON_STARTUP: "true"
+  VOTE_IP_PEPPER: ${VOTE_IP_PEPPER:-dev-pepper}
+  ADMIN_TOKEN_PEPPER: ${ADMIN_TOKEN_PEPPER:-dev-admin-pepper}
+  ADMIN_API_TOKENS_HASHED: ${ADMIN_API_TOKENS_HASHED:-}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-splattop}
+    ports:
+      - "5432:5432"
+    volumes:
+      - splatvote-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-splattop}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7.2.4-alpine
+    ports:
+      - "6379:6379"
+
+  vote-api:
+    build:
+      context: .
+      dockerfile: dockerfiles/dockerfile.vote-api
+    command: uvicorn vote_api.app:app --reload --app-dir src --host 0.0.0.0 --port 8000 --reload-dir /app/src/vote_api --reload-dir /app/src/shared_lib
+    user: "${UID:-0}:${GID:-0}"
+    environment:
+      <<: *api_env
+      PYTHONDONTWRITEBYTECODE: "1"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src/vote_api:/app/src/vote_api:ro
+      - ./src/shared_lib:/app/src/shared_lib:ro
+      - ./data:/app/data:ro
+      - ./migrations:/app/migrations:ro
+      - ./alembic.ini:/app/alembic.ini:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
+
+  vote-frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    environment:
+      HOST: "0.0.0.0"
+      CHOKIDAR_USEPOLLING: "true"
+      REACT_APP_API_URL: http://localhost:8000/api/v1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src/vote_frontend:/app
+      - vote-frontend-node-modules:/app/node_modules
+    depends_on:
+      - vote-api
+
+  migrate:
+    build:
+      context: .
+      dockerfile: dockerfiles/dockerfile.vote-api
+    command: alembic upgrade head
+    user: "${UID:-0}:${GID:-0}"
+    environment:
+      <<: *api_env
+    volumes:
+      - ./src/vote_api:/app/src/vote_api:ro
+      - ./src/shared_lib:/app/src/shared_lib:ro
+      - ./migrations:/app/migrations:ro
+      - ./alembic.ini:/app/alembic.ini:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  splatvote-db:
+  vote-frontend-node-modules:

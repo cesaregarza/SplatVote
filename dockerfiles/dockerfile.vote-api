@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir uv
 
 FROM base AS dependencies
-COPY pyproject.toml ./
+COPY pyproject.toml README.md ./
 RUN uv pip install --system .
 
 FROM dependencies AS build

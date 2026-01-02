@@ -48,6 +48,11 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
+        connection.execution_options(
+            isolation_level="AUTOCOMMIT"
+        ).exec_driver_sql("CREATE SCHEMA IF NOT EXISTS voting")
+
+    with connectable.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,

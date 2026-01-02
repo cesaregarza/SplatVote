@@ -3,7 +3,7 @@ import React from 'react';
 function EloRankings({ results }) {
   if (!results || results.length === 0) {
     return (
-      <div className="text-center py-10 text-gray-400">
+      <div className="text-center py-10 text-slate-400">
         No matches played yet. Be the first to vote!
       </div>
     );
@@ -17,9 +17,9 @@ function EloRankings({ results }) {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-slate-900/60 border border-white/5 rounded-xl overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-700">
+          <thead className="bg-slate-900/80 text-slate-200 text-sm uppercase tracking-wide">
             <tr>
               <th className="py-3 px-4 text-left">Rank</th>
               <th className="py-3 px-4 text-left">Item</th>
@@ -35,15 +35,15 @@ function EloRankings({ results }) {
               return (
                 <tr
                   key={result.item_id}
-                  className={`border-t border-gray-700 ${isTop3 ? 'bg-gray-750' : ''}`}
+                  className={`border-t border-white/5 ${isTop3 ? 'bg-slate-900/80' : ''}`}
                 >
                   <td className="py-3 px-4">
                     <div className={`
-                      w-8 h-8 flex items-center justify-center rounded-full font-bold
-                      ${index === 0 ? 'bg-yellow-500 text-black' : ''}
-                      ${index === 1 ? 'bg-gray-400 text-black' : ''}
-                      ${index === 2 ? 'bg-orange-600 text-white' : ''}
-                      ${index > 2 ? 'bg-gray-600' : ''}
+                      w-8 h-8 flex items-center justify-center rounded-full font-semibold
+                      ${index === 0 ? 'bg-fuchsia-400 text-slate-950' : ''}
+                      ${index === 1 ? 'bg-fuchsia-300 text-slate-950' : ''}
+                      ${index === 2 ? 'bg-fuchsia-500 text-slate-950' : ''}
+                      ${index > 2 ? 'bg-slate-700 text-slate-100' : ''}
                     `}>
                       {index + 1}
                     </div>
@@ -62,18 +62,18 @@ function EloRankings({ results }) {
                   </td>
                   <td className="py-3 px-4 text-center">
                     <div className="flex items-center justify-center gap-2">
-                      <span className="font-bold text-splat-orange text-lg">
+                      <span className="font-semibold text-fuchsia-300 text-lg">
                         {Math.round(result.elo_rating || 1500)}
                       </span>
-                      <div className="w-16 bg-gray-700 rounded-full h-2">
+                      <div className="w-16 bg-slate-800/70 rounded-full h-2">
                         <div
-                          className="bg-splat-purple h-2 rounded-full"
+                          className="bg-fuchsia-500 h-2 rounded-full"
                           style={{ width: `${eloNormalized * 100}%` }}
                         />
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-center text-gray-400">
+                  <td className="py-3 px-4 text-center text-slate-400">
                     {result.games_played || 0}
                   </td>
                 </tr>

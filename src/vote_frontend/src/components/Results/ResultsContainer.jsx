@@ -17,7 +17,7 @@ function ResultsContainer() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-splat-orange"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-fuchsia-400"></div>
       </div>
     );
   }
@@ -25,8 +25,8 @@ function ResultsContainer() {
   if (error || !results) {
     return (
       <div className="text-center py-20">
-        <p className="text-red-500 text-lg">{error || 'Results not found'}</p>
-        <Link to="/" className="mt-4 inline-block text-splat-orange hover:underline">
+        <p className="text-rose-300 text-lg">{error || 'Results not found'}</p>
+        <Link to="/" className="mt-4 inline-block text-fuchsia-300 hover:underline">
           ← Back to categories
         </Link>
       </div>
@@ -42,13 +42,13 @@ function ResultsContainer() {
   return (
     <div>
       <div className="mb-8">
-        <Link to="/" className="text-splat-orange hover:underline">
+        <Link to="/" className="text-fuchsia-300 hover:underline">
           ← Back to categories
         </Link>
       </div>
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">{results.category_name}</h1>
-        <p className="text-gray-400">
+        <h1 className="text-3xl font-semibold text-white mb-2">{results.category_name}</h1>
+        <p className="text-slate-300">
           {results.total_votes} total vote{results.total_votes !== 1 ? 's' : ''}
         </p>
       </div>
@@ -56,7 +56,7 @@ function ResultsContainer() {
       <div className="text-center mt-8">
         <Link
           to={`/vote/${categoryId}`}
-          className="inline-block px-6 py-3 bg-splat-orange text-white rounded-lg hover:bg-orange-600"
+          className="inline-block rounded-full bg-fuchsia-600 px-6 py-3 text-white hover:bg-fuchsia-500"
         >
           Cast Your Vote
         </Link>

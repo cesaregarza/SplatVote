@@ -39,9 +39,9 @@ function SortableItem({ item, rank }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center gap-4 p-4 bg-gray-800 rounded-xl cursor-grab active:cursor-grabbing"
+      className="flex items-center gap-4 p-4 bg-slate-900/60 border border-white/5 rounded-xl cursor-grab active:cursor-grabbing"
     >
-      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-splat-purple rounded-full font-bold text-lg">
+      <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-fuchsia-500/20 text-fuchsia-100 rounded-full font-semibold text-lg">
         {rank}
       </div>
       {item.image_url && (
@@ -52,12 +52,12 @@ function SortableItem({ item, rank }) {
         />
       )}
       <div className="flex-1">
-        <h3 className="font-bold text-white">{item.name}</h3>
+        <h3 className="font-semibold text-white">{item.name}</h3>
         {item.group_name && (
-          <p className="text-gray-400 text-sm">{item.group_name}</p>
+          <p className="text-slate-400 text-sm">{item.group_name}</p>
         )}
       </div>
-      <div className="text-gray-500">
+      <div className="text-slate-500">
         ⋮⋮
       </div>
     </div>
@@ -93,7 +93,7 @@ function RankedList({ items, onVote, loading }) {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <p className="text-center text-gray-400 mb-6">
+      <p className="text-center text-slate-300 mb-6">
         Drag and drop to rank from best (top) to worst (bottom):
       </p>
       <DndContext
@@ -118,9 +118,9 @@ function RankedList({ items, onVote, loading }) {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="mt-6 px-8 py-3 bg-splat-orange text-white text-lg font-bold rounded-xl
-                     hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed
-                     transition-all transform hover:scale-105"
+          className="mt-6 px-8 py-3 bg-fuchsia-600 text-white text-lg font-semibold rounded-full
+                     hover:bg-fuchsia-500 disabled:opacity-50 disabled:cursor-not-allowed
+                     transition-all"
         >
           {loading ? 'Submitting...' : 'Submit Rankings'}
         </button>

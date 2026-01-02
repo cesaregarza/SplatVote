@@ -3,18 +3,21 @@ import { Link } from 'react-router-dom';
 
 function Header() {
   return (
-    <header className="bg-gradient-to-r from-splat-orange to-splat-purple py-4 shadow-lg">
-      <div className="container mx-auto px-4">
+    <header className="border-b border-white/5 bg-slate-950/80 backdrop-blur">
+      <div className="max-w-6xl mx-auto px-6 py-5">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-3">
-            <span className="text-3xl font-bold text-white drop-shadow-lg">
+          <Link to="/" className="flex items-center gap-4">
+            <span className="text-xs uppercase tracking-[0.3em] text-slate-400">
+              vote.splat.top
+            </span>
+            <span className="text-2xl font-semibold text-white">
               SplatVote
             </span>
           </Link>
-          <nav className="flex items-center space-x-6">
+          <nav className="flex items-center gap-4 text-sm">
             <Link
               to="/"
-              className="text-white hover:text-yellow-300 transition-colors font-medium"
+              className="text-slate-300 hover:text-white transition-colors"
             >
               Categories
             </Link>

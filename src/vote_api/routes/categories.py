@@ -50,7 +50,11 @@ async def get_category(
     """Get a category with its items."""
     result = await session.execute(
         select(Category)
-        .options(selectinload(Category.category_items).selectinload(CategoryItem.item))
+        .options(
+            selectinload(Category.category_items)
+            .selectinload(CategoryItem.item)
+            .selectinload(Item.group)
+        )
         .where(Category.id == category_id)
     )
     category = result.scalar_one_or_none()
@@ -91,6 +95,7 @@ async def get_category_items(
     result = await session.execute(
         select(Item)
         .join(CategoryItem)
+        .options(selectinload(Item.group))
         .where(CategoryItem.category_id == category_id)
     )
     items = list(result.scalars().all())

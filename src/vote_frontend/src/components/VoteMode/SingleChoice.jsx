@@ -14,7 +14,7 @@ function SingleChoice({ items, onVote, loading }) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <p className="text-center text-gray-400 mb-6">
+      <p className="text-center text-slate-300 mb-6">
         Select one option:
       </p>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
@@ -33,9 +33,9 @@ function SingleChoice({ items, onVote, loading }) {
         <button
           onClick={handleSubmit}
           disabled={!selected || loading}
-          className="mt-6 px-8 py-3 bg-splat-orange text-white text-lg font-bold rounded-xl
-                     hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed
-                     transition-all transform hover:scale-105"
+          className="mt-6 px-8 py-3 bg-fuchsia-600 text-white text-lg font-semibold rounded-full
+                     hover:bg-fuchsia-500 disabled:opacity-50 disabled:cursor-not-allowed
+                     transition-all"
         >
           {loading ? 'Submitting...' : 'Submit Vote'}
         </button>

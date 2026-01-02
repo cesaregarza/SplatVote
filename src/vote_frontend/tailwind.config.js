@@ -8,10 +8,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'splat-orange': '#f54910',
-        'splat-purple': '#603bff',
-        'splat-green': '#00ff00',
-        'splat-pink': '#ff00ff',
+        'splat-orange': '#d946ef',
+        'splat-purple': '#c026d3',
+        'splat-green': '#22c55e',
+        'splat-pink': '#f472b6',
+      },
+      fontFamily: {
+        sans: ['Manrope', 'sans-serif'],
+        display: ['Space Grotesk', 'sans-serif'],
       },
     },
   },

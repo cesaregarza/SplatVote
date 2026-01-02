@@ -25,7 +25,7 @@ function EloTournament({ items, onVote, loading }) {
 
   if (!itemA || !itemB) {
     return (
-      <div className="text-center py-10 text-gray-400">
+      <div className="text-center py-10 text-slate-400">
         Not enough items for a matchup.
       </div>
     );
@@ -33,7 +33,7 @@ function EloTournament({ items, onVote, loading }) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <p className="text-center text-gray-400 mb-8">
+      <p className="text-center text-slate-300 mb-8">
         Which one do you prefer? Click to select.
       </p>
       <div className="flex justify-center items-center gap-8">
@@ -41,10 +41,10 @@ function EloTournament({ items, onVote, loading }) {
         <div
           onClick={() => handleSelect(itemA.id)}
           className={`
-            flex-1 max-w-xs p-6 rounded-2xl cursor-pointer transition-all duration-200
+            flex-1 max-w-xs p-6 rounded-2xl cursor-pointer transition-all duration-200 border border-white/5
             ${selected === itemA.id
-              ? 'bg-splat-orange ring-4 ring-yellow-400 scale-105'
-              : 'bg-gray-800 hover:bg-gray-700'}
+              ? 'bg-slate-900/80 ring-2 ring-fuchsia-400/50 shadow-[0_0_22px_rgba(217,70,239,0.25)]'
+              : 'bg-slate-900/50 hover:bg-slate-900/70'}
             ${loading ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
@@ -57,13 +57,13 @@ function EloTournament({ items, onVote, loading }) {
               />
             </div>
           )}
-          <h3 className="text-center font-bold text-white text-xl">
+          <h3 className="text-center font-semibold text-white text-xl">
             {itemA.name}
           </h3>
         </div>
 
         {/* VS */}
-        <div className="text-4xl font-bold text-splat-purple">
+        <div className="text-4xl font-semibold text-fuchsia-300">
           VS
         </div>
 
@@ -71,10 +71,10 @@ function EloTournament({ items, onVote, loading }) {
         <div
           onClick={() => handleSelect(itemB.id)}
           className={`
-            flex-1 max-w-xs p-6 rounded-2xl cursor-pointer transition-all duration-200
+            flex-1 max-w-xs p-6 rounded-2xl cursor-pointer transition-all duration-200 border border-white/5
             ${selected === itemB.id
-              ? 'bg-splat-orange ring-4 ring-yellow-400 scale-105'
-              : 'bg-gray-800 hover:bg-gray-700'}
+              ? 'bg-slate-900/80 ring-2 ring-fuchsia-400/50 shadow-[0_0_22px_rgba(217,70,239,0.25)]'
+              : 'bg-slate-900/50 hover:bg-slate-900/70'}
             ${loading ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
@@ -87,7 +87,7 @@ function EloTournament({ items, onVote, loading }) {
               />
             </div>
           )}
-          <h3 className="text-center font-bold text-white text-xl">
+          <h3 className="text-center font-semibold text-white text-xl">
             {itemB.name}
           </h3>
         </div>
@@ -98,9 +98,9 @@ function EloTournament({ items, onVote, loading }) {
         <button
           onClick={handleSubmit}
           disabled={!selected || loading}
-          className="mt-6 px-8 py-3 bg-splat-orange text-white text-lg font-bold rounded-xl
-                     hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed
-                     transition-all transform hover:scale-105"
+          className="mt-6 px-8 py-3 bg-fuchsia-600 text-white text-lg font-semibold rounded-full
+                     hover:bg-fuchsia-500 disabled:opacity-50 disabled:cursor-not-allowed
+                     transition-all"
         >
           {loading ? 'Submitting...' : 'Confirm Choice'}
         </button>
