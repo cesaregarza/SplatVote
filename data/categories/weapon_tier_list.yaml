@@ -1,0 +1,12 @@
+# Weapon Tier List - ELO Tournament
+name: "Ultimate Weapon Tier List"
+description: "Which weapon reigns supreme? Vote in head-to-head matchups!"
+comparison_mode: elo_tournament
+is_active: true
+item_group: "Weapons"
+settings:
+  allow_comments: true
+  elo:
+    k_factor: 32
+    initial_rating: 1500
+    matchups_per_vote: 1

@@ -1,0 +1,69 @@
+# Splatoon 3 Weapons Item Group
+name: "Weapons"
+description: "Splatoon 3 main weapons"
+icon_url: "https://cdn.wikimg.net/en/splatoonwiki/images/thumb/2/22/S3_Icon_Main.svg/36px-S3_Icon_Main.svg.png"
+
+items:
+  - name: "Splattershot"
+    image_url: "https://cdn.wikimg.net/en/splatoonwiki/images/3/37/S3_Weapon_Main_Splattershot.png"
+    metadata:
+      type: "shooter"
+      sub: "Suction Bomb"
+      special: "Trizooka"
+      class: "Shooter"
+
+  - name: "Splattershot Jr."
+    image_url: "https://cdn.wikimg.net/en/splatoonwiki/images/8/8d/S3_Weapon_Main_Splattershot_Jr..png"
+    metadata:
+      type: "shooter"
+      sub: "Splat Bomb"
+      special: "Big Bubbler"
+      class: "Shooter"
+
+  - name: "Splat Roller"
+    image_url: "https://cdn.wikimg.net/en/splatoonwiki/images/6/6b/S3_Weapon_Main_Splat_Roller.png"
+    metadata:
+      type: "roller"
+      sub: "Curling Bomb"
+      special: "Big Bubbler"
+      class: "Roller"
+
+  - name: "Splat Charger"
+    image_url: "https://cdn.wikimg.net/en/splatoonwiki/images/a/ae/S3_Weapon_Main_Splat_Charger.png"
+    metadata:
+      type: "charger"
+      sub: "Splat Bomb"
+      special: "Ink Vac"
+      class: "Charger"
+
+  - name: "Slosher"
+    image_url: "https://cdn.wikimg.net/en/splatoonwiki/images/6/6c/S3_Weapon_Main_Slosher.png"
+    metadata:
+      type: "slosher"
+      sub: "Splat Bomb"
+      special: "Triple Inkstrike"
+      class: "Slosher"
+
+  - name: "N-ZAP '85"
+    image_url: "https://cdn.wikimg.net/en/splatoonwiki/images/7/74/S3_Weapon_Main_N-ZAP_%2785.png"
+    metadata:
+      type: "shooter"
+      sub: "Suction Bomb"
+      special: "Tacticooler"
+      class: "Shooter"
+
+  - name: "Aerospray MG"
+    image_url: "https://cdn.wikimg.net/en/splatoonwiki/images/9/99/S3_Weapon_Main_Aerospray_MG.png"
+    metadata:
+      type: "shooter"
+      sub: "Fizzy Bomb"
+      special: "Reefslider"
+      class: "Shooter"
+
+  - name: "Inkbrush"
+    image_url: "https://cdn.wikimg.net/en/splatoonwiki/images/e/e3/S3_Weapon_Main_Inkbrush.png"
+    metadata:
+      type: "brush"
+      sub: "Splat Bomb"
+      special: "Killer Wail 5.1"
+      class: "Brush"

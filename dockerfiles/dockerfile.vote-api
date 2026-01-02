@@ -1,0 +1,39 @@
+# Vote API Dockerfile
+ARG BASE_IMAGE=python:3.11-slim
+
+FROM $BASE_IMAGE AS base
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    curl gcc make libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir uv
+
+FROM base AS dependencies
+COPY pyproject.toml ./
+RUN uv pip install --system .
+
+FROM dependencies AS build
+ARG BUILD_VERSION=1.0.0
+
+COPY src/vote_api /app/src/vote_api
+COPY src/shared_lib /app/src/shared_lib
+COPY data /app/data
+COPY migrations /app/migrations
+COPY alembic.ini /app/
+
+ENV PYTHONPATH=/app/src
+ENV BUILD_VERSION=${BUILD_VERSION}
+
+# Create non-root user
+RUN useradd -m -u 10001 appuser
+USER appuser
+
+EXPOSE 8000
+
+CMD ["gunicorn", "vote_api.app:app", \
+     "-k", "uvicorn.workers.UvicornWorker", \
+     "--bind", "0.0.0.0:8000", \
+     "--workers", "2", \
+     "--timeout", "120"]

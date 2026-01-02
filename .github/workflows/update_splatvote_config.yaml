@@ -1,0 +1,138 @@
+name: Build and Update SplatVote Config
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "data/**"
+      - "migrations/**"
+      - "dockerfiles/**"
+      - "pyproject.toml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: splatvote-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: tag
+        run: echo "tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DigitalOcean Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.digitalocean.com
+          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build & push vote-api image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: dockerfiles/dockerfile.vote-api
+          push: true
+          tags: |
+            registry.digitalocean.com/sendouq/vote-api:latest
+            registry.digitalocean.com/sendouq/vote-api:${{ steps.tag.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build & push vote-frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: dockerfiles/dockerfile.vote-frontend
+          build-args: |
+            REACT_APP_VERSION=${{ steps.tag.outputs.tag }}
+            REACT_APP_API_URL=/api/v1
+          push: true
+          tags: |
+            registry.digitalocean.com/sendouq/vote-frontend:latest
+            registry.digitalocean.com/sendouq/vote-frontend:${{ steps.tag.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  update_config_repo:
+    needs: build
+    if: needs.build.result == 'success' && secrets.CONFIG_REPO_TOKEN != ''
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.build.outputs.image_tag }}
+      BRANCH: bot/splatvote-${{ github.run_id }}
+    steps:
+      - name: Checkout config repository
+        uses: actions/checkout@v4
+        with:
+          repository: cesaregarza/SplatTopConfig
+          token: ${{ secrets.CONFIG_REPO_TOKEN }}
+          path: config-repo
+          ref: main
+
+      - name: Install config repo deps
+        run: python3 -m pip install --user "ruamel.yaml>=0.18.0,<0.19"
+
+      - name: Update Helm values
+        id: update
+        run: |
+          set -euo pipefail
+          cd config-repo
+          git config user.name "splatvote-bot"
+          git config user.email "sre+bot@splat.top"
+          git checkout -b "${BRANCH}"
+
+          python3 scripts/update_config_image_tags.py \
+            --values-file helm/splatvote/values-prod.yaml \
+            --tag "${TAG}" \
+            --component voteApi \
+            --component voteFrontend \
+            --set-global
+
+          python3 scripts/update_config_image_tags.py \
+            --values-file helm/splatvote/values.yaml \
+            --tag "${TAG}" \
+            --component voteApi \
+            --component voteFrontend \
+            --set-global
+
+          git add helm/splatvote/values-prod.yaml helm/splatvote/values.yaml
+          if git diff --cached --quiet; then
+            echo "skip_pr=true" >> "$GITHUB_OUTPUT"
+            echo "No config changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: bump splatvote images ${TAG}"
+          git push --set-upstream origin "${BRANCH}"
+          echo "skip_pr=false" >> "$GITHUB_OUTPUT"
+
+      - name: Open config repo PR
+        if: steps.update.outputs.skip_pr != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.CONFIG_REPO_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd config-repo
+          gh pr create \
+            --base main \
+            --head "${BRANCH}" \
+            --title "[bot] Update SplatVote images ${TAG}" \
+            --body "Source: ${GITHUB_REPOSITORY}@${GITHUB_SHA}" \
+            || echo "Pull request already exists; continuing."
