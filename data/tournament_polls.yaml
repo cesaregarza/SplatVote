@@ -1,0 +1,433 @@
+# Tournament tier calibration poll - single multi-page poll for all tournaments
+# Users vote on what tier each tournament should be classified as
+
+poll:
+  name: "Tournament Tier Calibration"
+  description: "Help calibrate tournament tiers! Vote on what tier you think each tournament belongs to."
+  private_results: true
+  pages: 3
+  tier_options:
+    - X
+    - S+
+    - S
+    - A
+    - B
+    - C
+    - D
+    - Don't know
+
+tournaments:
+- id: sendou-2872
+  name: 'Milkcup #2'
+  tier: D
+  url: https://sendou.ink/to/2872/results
+  winners:
+  - placement: 1
+    team:
+      name: No creith no bow
+      url: https://sendou.ink/to/2872/teams/50592
+      players:
+      - Choar
+      - Félix
+      - Paper 📜
+      - Xolo!
+  - placement: 2
+    team:
+      name: Masters of Spinjitsu
+      url: https://sendou.ink/to/2872/teams/49767
+      players:
+      - Chamomile
+      - '[DAV] Madmask'
+      - koikoi!
+      - Syrup
+- id: sendou-2716
+  name: Biggest School in the Sea 7
+  tier: D
+  url: https://sendou.ink/to/2716/results
+  winners:
+  - placement: 1
+    team:
+      name: Taranza Air rider
+      url: https://sendou.ink/to/2716/teams/47322
+      players:
+      - cj!
+      - Nahtqn
+      - Nameka
+      - Venoct™
+  - placement: 2
+    team:
+      name: XII Arcana
+      url: https://sendou.ink/to/2716/teams/47304
+      players:
+      - code 5469
+      - Evoker
+      - josh
+      - Vizzy
+- id: sendou-2866
+  name: Level Up 61
+  tier: D
+  url: https://sendou.ink/to/2866/results
+  winners:
+  - placement: 1
+    team:
+      name: 王KING王
+      url: https://sendou.ink/to/2866/teams/51663
+      players:
+      - Santo
+      - soren
+      - Zawg
+      - υιτra
+  - placement: 2
+    team:
+      name: Carmel
+      url: https://sendou.ink/to/2866/teams/51678
+      players:
+      - cyrene kit(soro)
+      - Hermit
+      - Oreo
+      - pollo
+- id: sendou-2858
+  name: 'Moo Moo Cup #5'
+  tier: C
+  url: https://sendou.ink/to/2858/results
+  winners:
+  - placement: 1
+    team:
+      name: 王KING王
+      url: https://sendou.ink/to/2858/teams/50601
+      players:
+      - definitely santo and not taxes
+      - Santo
+      - soren
+      - υιτra
+  - placement: 2
+    team:
+      name: no promises
+      url: https://sendou.ink/to/2858/teams/50608
+      players:
+      - kuro
+      - Mondi♡
+      - SKITTLES
+      - Ξ↑ LeFish
+- id: sendou-3021
+  name: Tropical Tuesdays 31
+  tier: C
+  url: https://sendou.ink/to/3021/results
+  winners:
+  - placement: 1
+    team:
+      name: Over the Moon
+      url: https://sendou.ink/to/3021/teams/52590
+      players:
+      - Ace
+      - Assis
+      - No_Name™
+      - Pita
+  - placement: 2
+    team:
+      name: super uncs
+      url: https://sendou.ink/to/3021/teams/52569
+      players:
+      - buns
+      - Jisha
+      - Kenshin
+      - OmarComing
+- id: sendou-2675
+  name: 'Maya''s Diamond Heist #0.5'
+  tier: C
+  url: https://sendou.ink/to/2675/results
+  winners:
+  - placement: 1
+    team:
+      name: the bwos >_<
+      url: https://sendou.ink/to/2675/teams/48794
+      players:
+      - hayden
+      - kiki
+      - oiler
+      - smile! <3 🍰
+  - placement: 2
+    team:
+      name: one letter
+      url: https://sendou.ink/to/2675/teams/48790
+      players:
+      - alwo
+      - natmi
+      - Slord
+      - T
+- id: sendou-2982
+  name: 'Shark Tank: Deep Waters #27'
+  tier: B
+  url: https://sendou.ink/to/2982/results
+  winners:
+  - placement: 1
+    team:
+      name: Righteousness
+      url: https://sendou.ink/to/2982/teams/52262
+      players:
+      - GIDDYGRIZZ
+      - k
+      - Nahtqn
+      - ☆TM4ST3R☆
+  - placement: 2
+    team:
+      name: Lazarus
+      url: https://sendou.ink/to/2982/teams/52264
+      players:
+      - speck
+      - yoshii
+      - Zekrom
+      - 彡✦✪Bonk✪✦彡
+- id: sendou-2560
+  name: 'Crobattle Royale: 34th Edition'
+  tier: B
+  url: https://sendou.ink/to/2560/results
+  winners:
+  - placement: 1
+    team:
+      name: Cool With You
+      url: https://sendou.ink/to/2560/teams/52829
+      players:
+      - Ali
+      - cap
+      - kiki
+      - sunni
+  - placement: 2
+    team:
+      name: 王KING王
+      url: https://sendou.ink/to/2560/teams/52789
+      players:
+      - definitely santo and not taxes
+      - soren
+      - Zawg
+      - υιτra
+- id: sendou-2902
+  name: MIKU MIKU BEAM!!! 31
+  tier: B
+  url: https://sendou.ink/to/2902/results
+  winners:
+  - placement: 1
+    team:
+      name: Yaotl Teotl
+      url: https://sendou.ink/to/2902/teams/50389
+      players:
+      - 1Shot?
+      - Incakola
+      - Lex
+      - Pinkie Pie Puffle
+  - placement: 2
+    team:
+      name: Super Creek
+      url: https://sendou.ink/to/2902/teams/50352
+      players:
+      - IB Woomy
+      - prosper
+      - tan
+      - Tufa
+- id: sendou-2967
+  name: Dolphin Showdown 21
+  tier: A
+  url: https://sendou.ink/to/2967/results
+  winners:
+  - placement: 1
+    team:
+      name: usagi fanclub
+      url: https://sendou.ink/to/2967/teams/53060
+      players:
+      - cj!
+      - Miner
+      - Reiyu
+      - Tini
+  - placement: 2
+    team:
+      name: chocolate vanilla swirl
+      url: https://sendou.ink/to/2967/teams/53055
+      players:
+      - cap
+      - illusion
+      - ray
+      - shibal
+- id: sendou-2894
+  name: 'Baja''s Blast #30'
+  tier: A
+  url: https://sendou.ink/to/2894/results
+  winners:
+  - placement: 1
+    team:
+      name: ART強盗DX
+      url: https://sendou.ink/to/2894/teams/52611
+      players:
+      - あでぃ
+      - しゅーくりーむ
+      - ダキラ
+      - ポチ
+  - placement: 2
+    team:
+      name: SOS Affenalarm
+      url: https://sendou.ink/to/2894/teams/52743
+      players:
+      - Pancake
+      - piiiro
+      - Zekrom
+      - アスタ
+- id: sendou-2931
+  name: Paddling Pool 349
+  tier: A
+  url: https://sendou.ink/to/2931/results
+  winners:
+  - placement: 1
+    team:
+      name: 🦋
+      url: https://sendou.ink/to/2931/teams/51480
+      players:
+      - Ant
+      - Devin4K
+      - kera
+      - Silver
+  - placement: 2
+    team:
+      name: fuh
+      url: https://sendou.ink/to/2931/teams/51483
+      players:
+      - Aaron
+      - anthony
+      - iia_lls
+      - Mango
+- id: sendou-2916
+  name: Swim or Sink 211
+  tier: S
+  url: https://sendou.ink/to/2916/results
+  winners:
+  - placement: 1
+    team:
+      name: bum fridge
+      url: https://sendou.ink/to/2916/teams/52107
+      players:
+      - anthony
+      - iia_lls
+      - soulja
+      - Yeti
+  - placement: 2
+    team:
+      name: Yaotl Teotl
+      url: https://sendou.ink/to/2916/teams/52111
+      players:
+      - 1Shot?
+      - Albert.
+      - Incakola
+      - Pinkie Pie Puffle
+- id: sendou-3051
+  name: Triton-Cup 128
+  tier: S
+  url: https://sendou.ink/to/3051/results
+  winners:
+  - placement: 1
+    team:
+      name: Sunny's Brilliant Emporium
+      url: https://sendou.ink/to/3051/teams/53133
+      players:
+      - Argo
+      - Jovan
+      - Noah
+      - Yeti
+  - placement: 2
+    team:
+      name: MZ
+      url: https://sendou.ink/to/3051/teams/53114
+      players:
+      - Ant
+      - Devin4K
+      - kiki
+      - phoenix
+- id: sendou-2999
+  name: Christmas GOLDEN Paddling Pool 350
+  tier: S
+  url: https://sendou.ink/to/2999/results
+  winners:
+  - placement: 1
+    team:
+      name: Papa Noël
+      url: https://sendou.ink/to/2999/teams/52072
+      players:
+      - Argo
+      - Noah
+      - Volty
+      - Yeti
+  - placement: 2
+    team:
+      name: Paulberger Limo Gang
+      url: https://sendou.ink/to/2999/teams/52050
+      players:
+      - Aaron
+      - Devin4K
+      - iia_lls
+      - Yellow Shy Guy
+- id: sendou-2977
+  name: In The Zone 48
+  tier: S+
+  url: https://sendou.ink/to/2977/results
+  winners:
+  - placement: 1
+    team:
+      name: I have 2500xp in clams
+      url: https://sendou.ink/to/2977/teams/52728
+      players:
+      - Thunder
+      - willy
+      - xenith
+      - y0shell
+  - placement: 2
+    team:
+      name: Feu vert
+      url: https://sendou.ink/to/2977/teams/52714
+      players:
+      - Grey
+      - Noah
+      - Volty
+      - Yeti
+- id: sendou-2941
+  name: 'Break Zach’s Bank #11: THE RETURN (ALL MODES)'
+  tier: S+
+  url: https://sendou.ink/to/2941/results
+  winners:
+  - placement: 1
+    team:
+      name: GUAP SQUAD
+      url: https://sendou.ink/to/2941/teams/52373
+      players:
+      - Peroma-
+      - Riukun
+      - soulja
+      - Wolbo
+  - placement: 2
+    team:
+      name: Grougrou
+      url: https://sendou.ink/to/2941/teams/51974
+      players:
+      - Grey
+      - kou
+      - Mi-ramia
+      - Noah
+- id: sendou-1902
+  name: Splat World Series - Finals
+  tier: X
+  url: https://sendou.ink/to/1902/results
+  winners:
+  - placement: 1
+    team:
+      name: The Invincible Fleet Rei Maru
+      url: https://sendou.ink/to/1902/teams/38001
+      players:
+      - Garandou
+      - naegora
+      - reimaru
+      - ろぶた
+  - placement: 2
+    team:
+      name: Samurai Cat
+      url: https://sendou.ink/to/1902/teams/38264
+      players:
+      - hitokuchi
+      - Munya
+      - SAMURAI KASATO
+      - suemaru

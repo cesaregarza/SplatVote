@@ -31,7 +31,12 @@ def get_client_ip(request: Request) -> str:
 
 def hash_ip(ip: str) -> str:
     """Hash IP address with server-side pepper for privacy."""
-    pepper = os.getenv("VOTE_IP_PEPPER", "default-pepper-change-me")
+    pepper = os.getenv("VOTE_IP_PEPPER")
+    if not pepper:
+        raise RuntimeError(
+            "VOTE_IP_PEPPER environment variable is required for security. "
+            "Set it to a strong random string."
+        )
     return hashlib.sha256((pepper + ip).encode()).hexdigest()
 
 

@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useVoteAPI } from '../../hooks/useVoteAPI';
 import { useFingerprint } from '../../hooks/useFingerprint';
 import SingleChoice from './SingleChoice';
 import EloTournament from './EloTournament';
 import RankedList from './RankedList';
+import TournamentTiers from './TournamentTiers';
+import TournamentDetails from '../shared/TournamentDetails';
 
 function VoteContainer() {
   const { categoryId } = useParams();
@@ -12,8 +14,19 @@ function VoteContainer() {
   const [voteStatus, setVoteStatus] = useState(null);
   const [voteResult, setVoteResult] = useState(null);
 
-  const { fetchCategory, checkVoteStatus, submitVote, loading, error } = useVoteAPI();
+  const { fetchCategory, checkVoteStatus, submitVote, submitVoteUpsert, loading, error } = useVoteAPI();
   const { fingerprint, loading: fpLoading } = useFingerprint();
+
+  // useMemo must be called unconditionally (before any early returns)
+  const shuffledItems = useMemo(() => {
+    if (!category?.items) return [];
+    const itemsCopy = [...category.items];
+    for (let i = itemsCopy.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [itemsCopy[i], itemsCopy[j]] = [itemsCopy[j], itemsCopy[i]];
+    }
+    return itemsCopy;
+  }, [category]);
 
   useEffect(() => {
     fetchCategory(categoryId).then(setCategory);
@@ -31,6 +44,11 @@ function VoteContainer() {
     if (result?.success) {
       setVoteResult(result);
     }
+  };
+
+  const handleVoteUpsert = async (choices) => {
+    if (!fingerprint) return;
+    return await submitVoteUpsert(parseInt(categoryId), fingerprint, choices);
   };
 
   if (loading || fpLoading) {
@@ -78,7 +96,8 @@ function VoteContainer() {
     );
   }
 
-  if (voteStatus?.has_voted) {
+  // For tournament_tiers, allow users to continue voting/updating
+  if (voteStatus?.has_voted && category?.comparison_mode !== 'tournament_tiers') {
     return (
       <div className="max-w-md mx-auto text-center py-20">
         <div className="inline-flex items-center rounded-full border border-slate-500/30 bg-slate-800/50 px-4 py-1 text-xs uppercase tracking-[0.3em] text-slate-300">
@@ -110,6 +129,7 @@ function VoteContainer() {
     single_choice: SingleChoice,
     elo_tournament: EloTournament,
     ranked_list: RankedList,
+    tournament_tiers: TournamentTiers,
   }[category.comparison_mode];
 
   if (!VoteComponent) {
@@ -132,11 +152,15 @@ function VoteContainer() {
         {category.description && (
           <p className="text-slate-300">{category.description}</p>
         )}
+        <TournamentDetails
+          tournament={category.settings?.tournament}
+          privateResults={category.settings?.private_results}
+        />
       </div>
       <VoteComponent
         category={category}
-        items={category.items}
-        onVote={handleVote}
+        items={shuffledItems}
+        onVote={category.comparison_mode === 'tournament_tiers' ? handleVoteUpsert : handleVote}
         loading={loading}
       />
     </div>

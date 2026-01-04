@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -67,6 +67,11 @@ function SortableItem({ item, rank }) {
 function RankedList({ items, onVote, loading }) {
   const [orderedItems, setOrderedItems] = useState(items);
   const [comment, setComment] = useState(null);
+
+  // Sync state when items prop changes
+  useEffect(() => {
+    setOrderedItems(items);
+  }, [items]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),

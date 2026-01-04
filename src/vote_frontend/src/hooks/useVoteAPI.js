@@ -78,6 +78,32 @@ export function useVoteAPI() {
   }, []);
 
   /**
+   * Upsert a single vote choice (for tournament_tiers mode).
+   * Does not set loading state to avoid UI flicker on rapid clicks.
+   */
+  const submitVoteUpsert = useCallback(async (categoryId, fingerprint, choices) => {
+    try {
+      const response = await fetch(`${API_BASE}/vote/upsert`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category_id: categoryId,
+          fingerprint,
+          choices,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to save vote');
+      }
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }, []);
+
+  /**
    * Check vote status for a category.
    */
   const checkVoteStatus = useCallback(async (categoryId, fingerprint) => {
@@ -95,13 +121,15 @@ export function useVoteAPI() {
   /**
    * Fetch results for a category.
    */
-  const fetchResults = useCallback(async (categoryId) => {
+  const fetchResults = useCallback(async (categoryId, fingerprint = null) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE}/results/${categoryId}`);
-      if (!response.ok) throw new Error('Failed to fetch results');
-      return await response.json();
+      const query = fingerprint ? `?fingerprint=${fingerprint}` : '';
+      const response = await fetch(`${API_BASE}/results/${categoryId}${query}`);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.detail || 'Failed to fetch results');
+      return data;
     } catch (e) {
       setError(e.message);
       return null;
@@ -116,6 +144,7 @@ export function useVoteAPI() {
     fetchCategories,
     fetchCategory,
     submitVote,
+    submitVoteUpsert,
     checkVoteStatus,
     fetchResults,
   };

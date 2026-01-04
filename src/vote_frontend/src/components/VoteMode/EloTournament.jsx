@@ -1,20 +1,25 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import CommentBox from '../shared/CommentBox';
 
 function EloTournament({ items, onVote, loading }) {
   const [selected, setSelected] = useState(null);
   const [comment, setComment] = useState(null);
 
-  // Pick two random items for the matchup
-  const [itemA, itemB] = useMemo(() => {
-    if (items.length < 2) return [null, null];
-    const shuffled = [...items].sort(() => Math.random() - 0.5);
-    return [shuffled[0], shuffled[1]];
-  }, [items]);
+  // Items are already shuffled by VoteContainer, just take the first two
+  const itemA = items.length >= 2 ? items[0] : null;
+  const itemB = items.length >= 2 ? items[1] : null;
 
-  const handleSelect = (winnerId) => {
+  const handleSelect = useCallback((winnerId) => {
+    if (loading) return;
     setSelected(winnerId);
-  };
+  }, [loading]);
+
+  const handleKeyDown = useCallback((winnerId) => (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleSelect(winnerId);
+    }
+  }, [handleSelect]);
 
   const handleSubmit = () => {
     if (!selected || !itemA || !itemB) return;
@@ -39,13 +44,19 @@ function EloTournament({ items, onVote, loading }) {
       <div className="flex justify-center items-center gap-8">
         {/* Item A */}
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => handleSelect(itemA.id)}
+          onKeyDown={handleKeyDown(itemA.id)}
+          aria-pressed={selected === itemA.id}
+          aria-label={`Select ${itemA.name}`}
           className={`
             flex-1 max-w-xs p-6 rounded-2xl cursor-pointer transition-all duration-200 border border-white/5
             ${selected === itemA.id
               ? 'bg-slate-900/80 ring-2 ring-fuchsia-400/50 shadow-[0_0_22px_rgba(217,70,239,0.25)]'
               : 'bg-slate-900/50 hover:bg-slate-900/70'}
             ${loading ? 'opacity-50 cursor-not-allowed' : ''}
+            focus:outline-none focus:ring-2 focus:ring-fuchsia-400/50
           `}
         >
           {itemA.image_url && (
@@ -69,13 +80,19 @@ function EloTournament({ items, onVote, loading }) {
 
         {/* Item B */}
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => handleSelect(itemB.id)}
+          onKeyDown={handleKeyDown(itemB.id)}
+          aria-pressed={selected === itemB.id}
+          aria-label={`Select ${itemB.name}`}
           className={`
             flex-1 max-w-xs p-6 rounded-2xl cursor-pointer transition-all duration-200 border border-white/5
             ${selected === itemB.id
               ? 'bg-slate-900/80 ring-2 ring-fuchsia-400/50 shadow-[0_0_22px_rgba(217,70,239,0.25)]'
               : 'bg-slate-900/50 hover:bg-slate-900/70'}
             ${loading ? 'opacity-50 cursor-not-allowed' : ''}
+            focus:outline-none focus:ring-2 focus:ring-fuchsia-400/50
           `}
         >
           {itemB.image_url && (

@@ -19,7 +19,7 @@ def verify_admin_token(x_admin_token: str = Header(...)) -> bool:
     """Verify admin token from header."""
     admin_tokens_hashed = os.getenv("ADMIN_API_TOKENS_HASHED", "")
     if not admin_tokens_hashed:
-        raise HTTPException(status_code=500, detail="Admin tokens not configured")
+        raise HTTPException(status_code=503, detail="Service not configured")
 
     # Hash the provided token with pepper
     pepper = os.getenv("ADMIN_TOKEN_PEPPER", os.getenv("VOTE_IP_PEPPER", ""))

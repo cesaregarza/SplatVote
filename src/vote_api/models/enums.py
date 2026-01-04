@@ -9,3 +9,4 @@ class ComparisonMode(str, Enum):
     SINGLE_CHOICE = "single_choice"
     ELO_TOURNAMENT = "elo_tournament"
     RANKED_LIST = "ranked_list"
+    TOURNAMENT_TIERS = "tournament_tiers"  # Multi-item tier voting

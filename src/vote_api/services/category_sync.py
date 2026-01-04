@@ -9,7 +9,16 @@ import yaml
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from vote_api.models.database import Category, CategoryItem, Item, ItemGroup
+from vote_api.models.database import (
+    Category,
+    CategoryItem,
+    Comment,
+    EloRating,
+    Item,
+    ItemGroup,
+    Vote,
+    VoteChoice,
+)
 from vote_api.models.enums import ComparisonMode
 
 logger = logging.getLogger(__name__)
@@ -37,6 +46,7 @@ class CategorySyncService:
             "item_groups": {"created": 0, "updated": 0},
             "items": {"created": 0, "updated": 0},
             "categories": {"created": 0, "updated": 0},
+            "tournament_polls": {"created": 0, "updated": 0},
             "errors": [],
         }
 
@@ -66,12 +76,24 @@ class CategorySyncService:
                     results["errors"].append(f"{yaml_file.name}: {str(e)}")
                     logger.exception(f"Error syncing {yaml_file}")
 
+        # Sync tournament polls
+        tournament_polls_file = self.data_dir / "tournament_polls.yaml"
+        if tournament_polls_file.exists():
+            try:
+                poll_result = await self._sync_tournament_polls(tournament_polls_file)
+                results["tournament_polls"]["created"] = poll_result.get("created", 0)
+                results["tournament_polls"]["updated"] = poll_result.get("updated", 0)
+                results["tournament_polls"]["deleted"] = poll_result.get("deleted", 0)
+            except Exception as e:
+                results["errors"].append(f"tournament_polls.yaml: {str(e)}")
+                logger.exception("Error syncing tournament polls")
+
         await self.session.commit()
         return results
 
     async def _sync_item_group(self, yaml_file: Path) -> dict[str, int]:
         """Sync a single item group from YAML file."""
-        with open(yaml_file) as f:
+        with open(yaml_file, encoding="utf-8") as f:
             data = yaml.safe_load(f)
 
         result = {"created": 0, "updated": 0, "items_created": 0, "items_updated": 0}
@@ -124,7 +146,7 @@ class CategorySyncService:
 
     async def _sync_category(self, yaml_file: Path) -> dict[str, int]:
         """Sync a single category from YAML file."""
-        with open(yaml_file) as f:
+        with open(yaml_file, encoding="utf-8") as f:
             data = yaml.safe_load(f)
 
         result = {"created": 0, "updated": 0}
@@ -241,3 +263,147 @@ class CategorySyncService:
             return filtered
 
         return items
+
+    async def _sync_tournament_polls(self, yaml_file: Path) -> dict[str, int]:
+        """Sync tournament tier poll from tournament_polls.yaml.
+
+        Creates a single category with all tournaments as items.
+        Uses tournament_tiers comparison mode for multi-item tier voting.
+        """
+        with open(yaml_file, encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+
+        result = {"created": 0, "updated": 0, "deleted": 0}
+
+        # Clean up old individual tournament poll categories
+        old_polls = await self.session.execute(
+            select(Category).where(Category.name.like("Tournament tier:%"))
+        )
+        for old_cat in old_polls.scalars().all():
+            # Delete related records first (foreign key constraints)
+            # Delete vote choices and comments for votes in this category
+            votes_result = await self.session.execute(
+                select(Vote).where(Vote.category_id == old_cat.id)
+            )
+            for vote in votes_result.scalars().all():
+                await self.session.execute(
+                    VoteChoice.__table__.delete().where(VoteChoice.vote_id == vote.id)
+                )
+                await self.session.execute(
+                    Comment.__table__.delete().where(Comment.vote_id == vote.id)
+                )
+
+            # Delete votes, category items, and elo ratings
+            await self.session.execute(
+                Vote.__table__.delete().where(Vote.category_id == old_cat.id)
+            )
+            await self.session.execute(
+                CategoryItem.__table__.delete().where(CategoryItem.category_id == old_cat.id)
+            )
+            await self.session.execute(
+                EloRating.__table__.delete().where(EloRating.category_id == old_cat.id)
+            )
+
+            await self.session.delete(old_cat)
+            result["deleted"] += 1
+        await self.session.flush()
+
+        poll_config = data.get("poll", {})
+        tournaments = data.get("tournaments", [])
+        if not tournaments:
+            return result
+
+        # Create or get the Tournament Polls item group
+        group_result = await self.session.execute(
+            select(ItemGroup).where(ItemGroup.name == "Tournament Polls")
+        )
+        group = group_result.scalar_one_or_none()
+
+        if group is None:
+            group = ItemGroup(
+                name="Tournament Polls",
+                description="Tournaments for tier calibration voting",
+            )
+            self.session.add(group)
+            await self.session.flush()
+
+        # Create/update items for each tournament
+        tournament_item_ids = []
+        for tournament in tournaments:
+            tournament_id = tournament.get("id")
+            item_name = f"tournament:{tournament_id}"
+
+            item_result = await self.session.execute(
+                select(Item).where(Item.name == item_name, Item.group_id == group.id)
+            )
+            item = item_result.scalar_one_or_none()
+
+            # Store tournament data in item metadata
+            item_metadata = {
+                "tournament_id": tournament_id,
+                "display_name": tournament.get("name"),
+                "current_tier": tournament.get("tier"),
+                "url": tournament.get("url"),
+                "winners": tournament.get("winners", []),
+            }
+
+            if item is None:
+                item = Item(
+                    group_id=group.id,
+                    name=item_name,
+                    metadata_=item_metadata,
+                )
+                self.session.add(item)
+                await self.session.flush()
+            else:
+                item.metadata_ = item_metadata
+
+            tournament_item_ids.append(item.id)
+
+        # Build category settings
+        settings = {
+            "tier_options": poll_config.get("tier_options", ["X", "S+", "S", "A", "B", "C", "D"]),
+            "pages": poll_config.get("pages", 3),
+            "private_results": poll_config.get("private_results", False),
+        }
+
+        cat_name = poll_config.get("name", "Tournament Tier Calibration")
+
+        # Find or create the single category
+        existing = await self.session.execute(
+            select(Category).where(Category.name == cat_name)
+        )
+        category = existing.scalar_one_or_none()
+
+        if category is None:
+            category = Category(
+                name=cat_name,
+                description=poll_config.get("description"),
+                comparison_mode="tournament_tiers",
+                is_active=True,
+                settings=settings,
+            )
+            self.session.add(category)
+            await self.session.flush()
+            result["created"] = 1
+        else:
+            category.description = poll_config.get("description")
+            category.comparison_mode = "tournament_tiers"
+            category.is_active = True
+            category.settings = settings
+            result["updated"] = 1
+
+        # Clear existing category items and link tournament items
+        await self.session.execute(
+            CategoryItem.__table__.delete().where(
+                CategoryItem.category_id == category.id
+            )
+        )
+        await self.session.flush()
+
+        for item_id in tournament_item_ids:
+            cat_item = CategoryItem(category_id=category.id, item_id=item_id)
+            self.session.add(cat_item)
+
+        await self.session.flush()
+        return result

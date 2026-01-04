@@ -1,6 +1,7 @@
 """Rate limiting and security middleware."""
 
 import hashlib
+import logging
 import os
 import time
 from typing import Callable
@@ -11,6 +12,8 @@ from starlette.responses import JSONResponse
 
 from vote_api.connections import get_redis
 from vote_api.services.fingerprint import get_client_ip
+
+logger = logging.getLogger(__name__)
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
@@ -47,8 +50,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         status_code=429,
                         content={"detail": "Vote rate limit exceeded"},
                     )
-            except Exception:
-                pass  # Fail open for rate limiting
+            except Exception as e:
+                logger.warning(f"Vote rate limiting unavailable: {e}")
 
         # Apply general rate limiting to all API endpoints
         if path.startswith("/api/"):
@@ -66,7 +69,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         status_code=429,
                         content={"detail": "Rate limit exceeded"},
                     )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning(f"API rate limiting unavailable: {e}")
 
         return await call_next(request)

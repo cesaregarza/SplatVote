@@ -1,0 +1,13 @@
+# Tournament tier options (used by all tier polls)
+name: "Tournament Tiers"
+description: "Tier labels for tournament classification polls"
+
+items:
+  - name: "X"
+  - name: "S+"
+  - name: "S"
+  - name: "A"
+  - name: "B"
+  - name: "C"
+  - name: "D"
+

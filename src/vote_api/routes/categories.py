@@ -34,6 +34,7 @@ async def list_categories(
             description=cat.description,
             comparison_mode=cat.comparison_mode,
             is_active=cat.is_active,
+            settings=cat.settings or {},
             items=[],
         )
         for cat in categories
@@ -82,6 +83,7 @@ async def get_category(
         description=category.description,
         comparison_mode=category.comparison_mode,
         is_active=category.is_active,
+        settings=category.settings or {},
         items=items,
     )
 

@@ -19,9 +19,9 @@ async function collectComponents() {
     },
     // Screen info
     screen: {
-      width: screen.width,
-      height: screen.height,
-      colorDepth: screen.colorDepth,
+      width: window.screen.width,
+      height: window.screen.height,
+      colorDepth: window.screen.colorDepth,
       pixelRatio: window.devicePixelRatio || 1,
     },
     // Timezone

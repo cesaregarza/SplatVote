@@ -47,6 +47,7 @@ class CategoryResponse(BaseModel):
     description: Optional[str] = None
     comparison_mode: ComparisonMode
     is_active: bool
+    settings: dict = Field(default_factory=dict)
     items: list[ItemResponse] = Field(default_factory=list)
 
     class Config:
@@ -89,6 +90,7 @@ class ItemResultResponse(BaseModel):
     elo_rating: Optional[float] = None
     games_played: Optional[int] = None
     average_rank: Optional[float] = None
+    metadata: dict = Field(default_factory=dict)
 
 
 class ResultsResponse(BaseModel):
