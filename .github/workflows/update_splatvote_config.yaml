@@ -11,9 +11,10 @@ on:
       - "migrations/**"
       - "dockerfiles/**"
       - "pyproject.toml"
+      - ".version"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: splatvote-deploy-${{ github.ref }}
@@ -24,14 +25,62 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.tag.outputs.tag }}
+      image_tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set image tag
-        id: tag
-        run: echo "tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - name: Read .version
+        id: semver
+        run: echo "version=$(cat .version | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Get latest release tag
+        id: latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(gh release view --json tagName -q .tagName 2>/dev/null || echo "")
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Compute next version
+        id: version
+        uses: actions/github-script@v7
+        env:
+          BASE_VERSION: ${{ steps.semver.outputs.version }}
+          LATEST_TAG: ${{ steps.latest.outputs.tag }}
+        with:
+          script: |
+            function parse(v) {
+              const cleaned = String(v || '')
+                .trim()
+                .replace(/^v\.?/, '');
+              const parts = cleaned.split('.');
+              const [M = '0', m = '0', p = '0'] = parts;
+              return {
+                M: Number(M) || 0,
+                m: Number(m) || 0,
+                p: Number(p) || 0,
+              };
+            }
+            const base = parse(process.env.BASE_VERSION);
+            const latest = parse(process.env.LATEST_TAG);
+
+            // Check if base version is greater than latest
+            const baseGreater =
+              base.M > latest.M ||
+              (base.M === latest.M && (
+                base.m > latest.m ||
+                (base.m === latest.m && base.p > latest.p)
+              ));
+
+            // If base > latest, use base; otherwise bump patch
+            const next = baseGreater
+              ? `${base.M}.${base.m}.${base.p}`
+              : `${latest.M}.${latest.m}.${latest.p + 1}`;
+
+            core.setOutput('version', next);
+            core.setOutput('tag', `v${next}`);
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -51,7 +100,7 @@ jobs:
           push: true
           tags: |
             registry.digitalocean.com/sendouq/vote-api:latest
-            registry.digitalocean.com/sendouq/vote-api:${{ steps.tag.outputs.tag }}
+            registry.digitalocean.com/sendouq/vote-api:${{ steps.version.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -61,18 +110,45 @@ jobs:
           context: .
           file: dockerfiles/dockerfile.vote-frontend
           build-args: |
-            REACT_APP_VERSION=${{ steps.tag.outputs.tag }}
+            REACT_APP_VERSION=${{ steps.version.outputs.tag }}
             REACT_APP_API_URL=/api/v1
           push: true
           tags: |
             registry.digitalocean.com/sendouq/vote-frontend:latest
-            registry.digitalocean.com/sendouq/vote-frontend:${{ steps.tag.outputs.tag }}
+            registry.digitalocean.com/sendouq/vote-frontend:${{ steps.version.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  release:
+    needs: build
+    if: needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create GitHub release if missing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.build.outputs.image_tag }}
+        run: |
+          if [ -z "${TAG}" ]; then
+            echo "No tag computed; skipping release."
+            exit 0
+          fi
+
+          existing=$(gh release view "${TAG}" --json tagName -q .tagName 2>/dev/null || echo "")
+          if [ -z "${existing}" ]; then
+            gh release create "${TAG}" \
+              --title "SplatVote ${TAG}" \
+              --generate-notes
+          else
+            echo "Release ${TAG} already exists; skipping."
+          fi
+
   update_config_repo:
     needs: build
-    if: needs.build.result == 'success' && secrets.CONFIG_REPO_TOKEN != ''
+    if: needs.build.result == 'success'
     runs-on: ubuntu-latest
     env:
       TAG: ${{ needs.build.outputs.image_tag }}
