@@ -36,10 +36,10 @@ function CategoryList() {
     <div>
       <div className="mb-10 rounded-2xl border border-white/5 bg-slate-900/60 px-6 py-8 shadow-[0_24px_60px_rgba(2,6,23,0.45)]">
         <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-          Community polls
+          Splatoon 3
         </p>
         <h1 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">
-          Vote on your favorites
+          Community Polls
         </h1>
         <p className="mt-2 max-w-2xl text-slate-300">
           Pick a category, cast your vote, and watch the rankings update as the
