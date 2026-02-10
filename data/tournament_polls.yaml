@@ -4,6 +4,10 @@
 poll:
   name: "Tournament Tier Calibration"
   description: "Help calibrate tournament tiers! Vote on what tier you think each tournament belongs to."
+  close_previous: true
+  is_active: true
+  discord_required: false
+  shuffle: true
   private_results: true
   pages: 3
   tier_options:

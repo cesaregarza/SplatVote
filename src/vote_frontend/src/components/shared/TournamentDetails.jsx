@@ -1,4 +1,5 @@
 import React from 'react';
+import Badge from './Badge';
 
 const formatEntry = (entry) => {
   if (!entry) return '';
@@ -30,14 +31,14 @@ function TournamentDetails({ tournament, privateResults }) {
           Tournament
         </span>
         {tierLabel && (
-          <span className="rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-fuchsia-200">
+          <Badge variant="mode">
             {tierLabel}
-          </span>
+          </Badge>
         )}
         {privateResults && (
-          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-200">
+          <Badge>
             Private results
-          </span>
+          </Badge>
         )}
       </div>
       <div className="mt-4 grid gap-4 md:grid-cols-3">
@@ -82,9 +83,11 @@ function TournamentDetails({ tournament, privateResults }) {
               {topParticipants.map((entry) => (
                 <li
                   key={entry}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-200"
+                  className="inline-flex"
                 >
-                  {entry}
+                  <Badge uppercase={false} className="text-xs">
+                    {entry}
+                  </Badge>
                 </li>
               ))}
             </ul>
@@ -100,9 +103,11 @@ function TournamentDetails({ tournament, privateResults }) {
               {winners.map((entry) => (
                 <li
                   key={entry}
-                  className="rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-semibold text-fuchsia-100"
+                  className="inline-flex"
                 >
-                  {entry}
+                  <Badge variant="mode" uppercase={false} className="text-xs">
+                    {entry}
+                  </Badge>
                 </li>
               ))}
             </ul>

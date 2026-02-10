@@ -67,7 +67,9 @@ async def list_all_categories(
 ) -> dict[str, Any]:
     """List all categories including inactive ones."""
     result = await session.execute(
-        select(Category).order_by(Category.created_at.desc())
+        select(Category)
+        .where(Category.is_soft_deleted == False)
+        .order_by(Category.created_at.desc())
     )
     categories = list(result.scalars().all())
 
@@ -96,7 +98,10 @@ async def update_category(
 ) -> dict[str, Any]:
     """Update category status."""
     result = await session.execute(
-        select(Category).where(Category.id == category_id)
+        select(Category).where(
+            Category.id == category_id,
+            Category.is_soft_deleted == False,
+        )
     )
     category = result.scalar_one_or_none()
 

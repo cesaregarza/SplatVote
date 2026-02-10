@@ -19,6 +19,7 @@ from vote_api.models.schemas import (
     VoteResponse,
     VoteStatusResponse,
 )
+from vote_api.services.discord_auth import get_discord_identity
 from vote_api.services.elo import EloService
 from vote_api.services.fingerprint import (
     AntiManipulationService,
@@ -27,6 +28,24 @@ from vote_api.services.fingerprint import (
 )
 
 router = APIRouter(prefix="/api/v1", tags=["votes"])
+
+
+def _enforce_discord_vote_auth(category: Category, request: Request) -> None:
+    """Require Discord auth when category settings mark it as required."""
+    settings = category.settings or {}
+    if not settings.get("discord_required"):
+        return
+
+    discord_user_id, _ = get_discord_identity(request)
+    if not discord_user_id:
+        detail = "Discord login required to vote in this category"
+        reason = settings.get("discord_reason")
+        if isinstance(reason, str) and reason.strip():
+            detail = f"{detail}. Reason: {reason.strip()}"
+        raise HTTPException(
+            status_code=401,
+            detail=detail,
+        )
 
 
 @router.post("/vote", response_model=VoteResponse)
@@ -54,13 +73,17 @@ async def submit_vote(
 
     # Get category
     result = await session.execute(
-        select(Category).where(Category.id == vote_request.category_id)
+        select(Category).where(
+            Category.id == vote_request.category_id,
+            Category.is_soft_deleted == False,
+        )
     )
     category = result.scalar_one_or_none()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     if not category.is_active:
         raise HTTPException(status_code=400, detail="Category is not active")
+    _enforce_discord_vote_auth(category, request)
 
     # Check if user already voted
     existing_vote = await session.execute(
@@ -100,6 +123,24 @@ async def submit_vote(
                 status_code=400,
                 detail="Single choice mode requires exactly one choice",
             )
+    elif category.comparison_mode == ComparisonMode.MULTI_SELECT.value:
+        if len(vote_request.choices) < 1:
+            raise HTTPException(
+                status_code=400,
+                detail="Multi-select mode requires at least one choice",
+            )
+        if len(set(vote_request.choices)) != len(vote_request.choices):
+            raise HTTPException(
+                status_code=400,
+                detail="Duplicate choices are not allowed",
+            )
+        max_choices = category.settings.get("max_choices")
+        if isinstance(max_choices, int) and max_choices > 0:
+            if len(vote_request.choices) > max_choices:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Multi-select mode allows up to {max_choices} choices",
+                )
     elif category.comparison_mode == ComparisonMode.ELO_TOURNAMENT.value:
         if len(vote_request.choices) != 2:
             raise HTTPException(
@@ -210,6 +251,15 @@ async def get_vote_status(
     if not validate_fingerprint(fingerprint):
         raise HTTPException(status_code=400, detail="Invalid fingerprint format")
 
+    category_result = await session.execute(
+        select(Category.id).where(
+            Category.id == category_id,
+            Category.is_soft_deleted == False,
+        )
+    )
+    if not category_result.scalar_one_or_none():
+        raise HTTPException(status_code=404, detail="Category not found")
+
     fingerprint_hash, _ = get_vote_identity(request, fingerprint)
 
     result = await session.execute(
@@ -227,6 +277,71 @@ async def get_vote_status(
             voted_at=vote.created_at,
         )
     return VoteStatusResponse(has_voted=False)
+
+
+@router.get("/vote/statuses", response_model=dict)
+async def get_vote_status_bulk(
+    request: Request,
+    fingerprint: str,
+    category_ids: str,
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Check vote status for multiple categories in one request."""
+    if not validate_fingerprint(fingerprint):
+        raise HTTPException(status_code=400, detail="Invalid fingerprint format")
+
+    raw_ids = [part.strip() for part in category_ids.split(",") if part.strip()]
+    if not raw_ids:
+        return {"statuses": {}}
+
+    parsed_ids: list[int] = []
+    for raw_id in raw_ids:
+        if not raw_id.isdigit():
+            raise HTTPException(status_code=400, detail="Invalid category_ids format")
+        parsed_ids.append(int(raw_id))
+
+    category_id_list = sorted(set(parsed_ids))
+    if len(category_id_list) > 200:
+        raise HTTPException(status_code=400, detail="Too many category IDs requested")
+
+    category_result = await session.execute(
+        select(Category.id).where(
+            Category.id.in_(category_id_list),
+            Category.is_soft_deleted == False,
+        )
+    )
+    valid_category_ids = {row[0] for row in category_result.all()}
+    if not valid_category_ids:
+        return {"statuses": {}}
+
+    fingerprint_hash, _ = get_vote_identity(request, fingerprint)
+    vote_result = await session.execute(
+        select(Vote.category_id, Vote.id, Vote.created_at).where(
+            Vote.category_id.in_(valid_category_ids),
+            Vote.fingerprint_hash == fingerprint_hash,
+        )
+    )
+
+    votes_by_category: dict[int, tuple[int, str]] = {}
+    for vote_category_id, vote_id, voted_at in vote_result.all():
+        votes_by_category[vote_category_id] = (vote_id, voted_at.isoformat())
+
+    statuses: dict[str, dict] = {}
+    for category_id in category_id_list:
+        if category_id not in valid_category_ids:
+            continue
+
+        if category_id in votes_by_category:
+            vote_id, voted_at = votes_by_category[category_id]
+            statuses[str(category_id)] = {
+                "has_voted": True,
+                "vote_id": vote_id,
+                "voted_at": voted_at,
+            }
+        else:
+            statuses[str(category_id)] = {"has_voted": False}
+
+    return {"statuses": statuses}
 
 
 @router.post("/vote/upsert", response_model=VoteResponse)
@@ -249,13 +364,17 @@ async def upsert_vote(
 
     # Get category
     result = await session.execute(
-        select(Category).where(Category.id == vote_request.category_id)
+        select(Category).where(
+            Category.id == vote_request.category_id,
+            Category.is_soft_deleted == False,
+        )
     )
     category = result.scalar_one_or_none()
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     if not category.is_active:
         raise HTTPException(status_code=400, detail="Category is not active")
+    _enforce_discord_vote_auth(category, request)
 
     # Only allow upsert for tournament_tiers mode
     if category.comparison_mode != ComparisonMode.TOURNAMENT_TIERS.value:

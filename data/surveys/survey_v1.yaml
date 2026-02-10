@@ -1,0 +1,747 @@
+survey:
+  key: survey_v1
+  label: Survey v1
+  is_active: true
+  deactivate_missing: true
+  discord_required: true
+  shuffle: false
+  discord_reason: Survey responses are limited to Discord-authenticated participants to reduce brigading.
+  default_page: 1
+  pages:
+  - key: '1'
+    title: Intro + Competitive Context
+    order: 1
+  - key: '2'
+    title: Participation Behavior
+    order: 2
+  - key: '3'
+    title: Goals + Plus Centrality
+    order: 3
+  - key: '4'
+    title: Risk, Reward, and Safety
+    order: 4
+  - key: '5'
+    title: Win vs Loss Impact
+    order: 5
+  - key: '6'
+    title: Visibility Vignettes
+    order: 6
+  - key: '7'
+    title: Credentialing Specifics
+    order: 7
+  - key: '8'
+    title: Open-Ended
+    order: 8
+  - key: '9'
+    title: Optional Follow-Up
+    order: 9
+questions:
+- id: q01_consent
+  name: Survey v1 Q0.1 Consent
+  description: I agree to participate in this anonymous survey.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 'Yes'
+  - name: No (I do not agree / end survey)
+  page: '1'
+  section: Consent
+- id: q11_involvement
+  name: Survey v1 Q1.1 Current Involvement
+  description: Which best describes your current involvement?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: I regularly compete (tournaments + organized practice)
+  - name: I sometimes compete (occasional tournaments/scrims)
+  - name: I'm trying to get more involved
+  - name: I'm currently taking a break / stepping back
+  - name: Prefer not to say
+  page: '1'
+  section: Your Current Competitive Context
+- id: q12_level
+  name: Survey v1 Q1.2 Self-Described Level
+  description: Self-described level (pick what feels closest).
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: New to competitive
+  - name: Low-level competitive
+  - name: Mid-level competitive
+  - name: High-level competitive
+  - name: Top-level competitive
+  - name: Prefer not to say
+  page: '1'
+  section: Your Current Competitive Context
+- id: q13_last_3mo_activities
+  name: Survey v1 Q1.3 Last 3 Months Participation
+  description: 'Select all that apply: in the last 3 months, I have participated in...'
+  comparison_mode: multi_select
+  shuffle: true
+  options:
+  - name: Tournaments
+  - name: Scrims (arranged practice vs another team)
+  - name: Tryouts (performance may affect future invites)
+  - name: Coaching (giving or receiving)
+  - name: None of the above
+  page: '1'
+  section: Your Current Competitive Context
+- id: q14_stable_team
+  name: Survey v1 Q1.4 Stable Team Status
+  description: Do you currently have a stable team?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: Yes (stable roster + regular practice)
+  - name: Somewhat (semi-stable / frequent mixes)
+  - name: No (pickup/mixes/LFT)
+  - name: Prefer not to say
+  page: '1'
+  section: Your Current Competitive Context
+- id: q21_scrims_4w
+  name: Survey v1 Q2.1 Scrims In Last 4 Weeks
+  description: In the last 4 weeks, how many times did you scrim?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: '0'
+  - name: 1-2
+  - name: 3-5
+  - name: 6-10
+  - name: 11+
+  page: '2'
+  section: Participation Behavior
+- id: q22_tryouts_4w
+  name: Survey v1 Q2.2 Tryouts In Last 4 Weeks
+  description: In the last 4 weeks, how many tryouts did you do (as player or host)?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: '0'
+  - name: '1'
+  - name: 2-3
+  - name: 4-6
+  - name: 7+
+  page: '2'
+  section: Participation Behavior
+- id: q23_tournaments_4w
+  name: Survey v1 Q2.3 Tournaments In Last 4 Weeks
+  description: In the last 4 weeks, how many tournaments did you enter?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: '0'
+  - name: '1'
+  - name: 2-3
+  - name: 4+
+  page: '2'
+  section: Participation Behavior
+- id: q24_more_or_less
+  name: Survey v1 Q2.4 Desired Practice Volume
+  description: Which is more true for you right now?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: I'd like to play/practice more than I currently do
+  - name: I'm playing/practicing about as much as I want
+  - name: I'd like to play/practice less than I currently do
+  - name: Not sure
+  page: '2'
+  section: Participation Behavior
+- id: q25_barriers
+  name: Survey v1 Q2.5 Participation Barriers
+  description: 'If you want to practice more: what is stopping you most? Pick up to 3.'
+  comparison_mode: multi_select
+  shuffle: true
+  options:
+  - name: Hard to get 4 people to commit
+  - name: Hard to find similarly skilled opponents
+  - name: Scheduling/time zones
+  - name: Practice feels stressful / high-stakes
+  - name: Fear of looking bad / reputational risk
+  - name: Team instability / roster churn
+  - name: I don't feel like practice translates into real improvement
+  - name: Burnout / low motivation
+  - name: Other (use comment box)
+  max_choices: 3
+  page: '2'
+  section: Participation Behavior
+- id: q31_goals
+  name: Survey v1 Q3.1 Main Goals
+  description: What are your main goals right now? Select up to 3.
+  comparison_mode: multi_select
+  shuffle: true
+  options:
+  - name: Improve skill / get better
+  - name: Find a stable team / teammates
+  - name: Do well in tournaments
+  - name: Become known / build reputation
+  - name: Enter / stay in a prestige server / tier (e.g., Plus)
+  - name: Have fun / play with friends
+  - name: Coach others / contribute to scene
+  - name: Other (use comment box)
+  max_choices: 3
+  page: '3'
+  section: Goals and Plus Centrality
+- id: q32_plus_primary_goal
+  name: Survey v1 Q3.2 Plus Primary Goal
+  description: 'Prestige server/tier status (e.g., Plus) is one of my primary competitive goals right
+    now. Scale: 1 Strongly disagree to 7 Strongly agree.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '3'
+  section: Goals and Plus Centrality
+- id: q33_plus_optimization_norm
+  name: Survey v1 Q3.3 Plus Optimization Norm
+  description: 'A lot of people I know optimize their behavior around prestige server/tier outcomes. Scale:
+    1 to 7.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '3'
+  section: Goals and Plus Centrality
+- id: q34_plus_access_effect
+  name: Survey v1 Q3.4 Plus Access Effect
+  description: 'Prestige server/tier membership meaningfully affects access to teams, scrims, or opportunities.
+    Scale: 1 to 7.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '3'
+  section: Goals and Plus Centrality
+- id: q41_avoid_sets_downside
+  name: Survey v1 Q4.1 Downside Dominance
+  description: I sometimes avoid playing sets because the downside feels bigger than the upside.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Downside and Reputational Risk
+- id: q42_losing_harms_opportunities
+  name: Survey v1 Q4.2 Loss Harms Opportunities
+  description: Losing a set can meaningfully harm my opportunities (invites/tryouts/teams).
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Downside and Reputational Risk
+- id: q43_fast_negative_updates
+  name: Survey v1 Q4.3 Faster Negative Updates
+  description: People update their opinion of players faster after a loss than after a win.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Downside and Reputational Risk
+- id: q44_bad_set_stickiness
+  name: Survey v1 Q4.4 Bad Set Stickiness
+  description: A single bad set can follow you for a long time (weeks/months).
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Downside and Reputational Risk
+- id: q45_practice_has_stakes
+  name: Survey v1 Q4.5 Practice Has Stakes
+  description: Even practice can feel like it has stakes.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Downside and Reputational Risk
+- id: q46_wins_convert
+  name: Survey v1 Q4.6 Wins Convert To Opportunities
+  description: Winning sets reliably converts into better opportunities for me.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Upside and Conversion
+- id: q47_perform_but_no_conversion
+  name: Survey v1 Q4.7 Performance Without Conversion
+  description: Even if I perform well, it may not convert into opportunities unless I am already known/popular.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Upside and Conversion
+- id: q48_scrims_improve
+  name: Survey v1 Q4.8 Scrims Help Improvement
+  description: Scrims reliably help me improve.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Upside and Conversion
+- id: q49_tournament_fair_skill_summary
+  name: Survey v1 Q4.9 Tournament Fairness Signal
+  description: Tournament results are a fair summary of skill most of the time.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Upside and Conversion
+- id: q410_status_gets_charity
+  name: Survey v1 Q4.10 Status Gets Benefit Of Doubt
+  description: Well-known/high-status players get more benefit of the doubt after losses than less-known
+    players do.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Asymmetry and Interpretive Charity
+- id: q411_unknown_harsher_judged
+  name: Survey v1 Q4.11 Unknowns Judged Harsher
+  description: Unknown players are judged more harshly for the same results.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Asymmetry and Interpretive Charity
+- id: q412_some_can_lose_without_cost
+  name: Survey v1 Q4.12 Unequal Loss Consequences
+  description: Some players can lose without consequences; others cannot.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Asymmetry and Interpretive Charity
+- id: q413_safe_to_experiment
+  name: Survey v1 Q4.13 Safe To Experiment
+  description: I feel safe experimenting (new comp/role) without it being used against me later.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Psychological Safety and Experimentation
+- id: q414_tryouts_audition_mode
+  name: Survey v1 Q4.14 Tryouts Feel Like Auditions
+  description: Tryouts usually feel like an audition rather than a learning environment.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Psychological Safety and Experimentation
+- id: q415_short_term_vs_long_term
+  name: Survey v1 Q4.15 Willing To Look Worse Short-Term
+  description: I am willing to look worse in the short term if it helps me improve long term.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Psychological Safety and Experimentation
+- id: q416_commitment_friction
+  name: Survey v1 Q4.16 Commitment Friction
+  description: Even when I want to play, it is hard to reliably get 4 people to commit.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Coordination Friction
+- id: q417_opponent_matching_friction
+  name: Survey v1 Q4.17 Opponent Matching Friction
+  description: It is hard to find similarly skilled opponents to scrim consistently.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '4'
+  section: Coordination Friction
+- id: q51_win_impact_0_10
+  name: Survey v1 Q5.1 Win Impact (0-10)
+  description: 'If you win a scrim vs a similarly skilled team, how much does it improve your reputation/opportunities?
+    Scale: 0 No effect to 10 Huge effect.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: '0'
+  - name: '1'
+  - name: '2'
+  - name: '3'
+  - name: '4'
+  - name: '5'
+  - name: '6'
+  - name: '7'
+  - name: '8'
+  - name: '9'
+  - name: '10'
+  page: '5'
+  section: Win vs Loss Impact
+- id: q52_loss_impact_0_10
+  name: Survey v1 Q5.2 Loss Impact (0-10)
+  description: 'If you lose a scrim vs a similarly skilled team, how much does it harm your reputation/opportunities?
+    Scale: 0 to 10.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: '0'
+  - name: '1'
+  - name: '2'
+  - name: '3'
+  - name: '4'
+  - name: '5'
+  - name: '6'
+  - name: '7'
+  - name: '8'
+  - name: '9'
+  - name: '10'
+  page: '5'
+  section: Win vs Loss Impact
+- id: q53_loss_to_stronger_impact_0_10
+  name: Survey v1 Q5.3 Loss To Stronger Team Impact (0-10)
+  description: 'If you lose to a clearly stronger team, how much does it harm your reputation/opportunities?
+    Scale: 0 to 10.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: '0'
+  - name: '1'
+  - name: '2'
+  - name: '3'
+  - name: '4'
+  - name: '5'
+  - name: '6'
+  - name: '7'
+  - name: '8'
+  - name: '9'
+  - name: '10'
+  page: '5'
+  section: Win vs Loss Impact
+- id: q61_private_set_likelihood
+  name: Survey v1 Q6.1 Private Set Likelihood
+  description: You can scrim a similarly skilled team tonight. Results are private (only the 8 players
+    will know). How likely are you to play?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Very unlikely
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Very likely
+  page: '6'
+  section: Visibility and Evaluator Presence
+- id: q62_community_known_likelihood
+  name: Survey v1 Q6.2 Community Visibility Likelihood
+  description: Same scrim, but results will probably be known in your server/community. How likely are
+    you to play?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Very unlikely
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Very likely
+  page: '6'
+  section: Visibility and Evaluator Presence
+- id: q63_streamed_likelihood
+  name: Survey v1 Q6.3 Streamed/Clipped Likelihood
+  description: Same scrim, but it might be streamed/clipped or widely discussed. How likely are you to
+    play?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Very unlikely
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Very likely
+  page: '6'
+  section: Visibility and Evaluator Presence
+- id: q64_top_player_present_likelihood
+  name: Survey v1 Q6.4 Top Player Present Likelihood
+  description: Same scrim, but a respected top player will be present/watching. How likely are you to
+    play?
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Very unlikely
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Very likely
+  page: '6'
+  section: Visibility and Evaluator Presence
+- id: q65_top_player_behavior
+  name: Survey v1 Q6.5 Top Player Presence Behavior
+  description: If a top player is present, I am more likely to...
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: Play normally
+  - name: Play more safely / avoid experimentation
+  - name: Try harder than usual / prove myself
+  - name: Avoid playing entirely
+  - name: Not sure / depends
+  - name: Other (use comment box)
+  page: '6'
+  section: Visibility and Evaluator Presence
+- id: q71_contestable_auditable
+  name: Survey v1 Q7.1 Contestable / Auditable Decisions
+  description: Prestige server/tier decisions feel contestable/auditable (people can understand why decisions
+    happen).
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '7'
+  section: Credentialing Specifics
+- id: q72_popularity_vs_results
+  name: Survey v1 Q7.2 Popularity Vs Results
+  description: Popularity/relationships matter as much as results for prestige outcomes.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '7'
+  section: Credentialing Specifics
+- id: q73_feel_evaluated_everywhere
+  name: Survey v1 Q7.3 Feel Evaluated
+  description: I feel like I am being evaluated in many of the spaces where I play.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '7'
+  section: Credentialing Specifics
+- id: q74_signal_useful
+  name: Survey v1 Q7.4 Signal Usefulness
+  description: The current prestige system is correlated enough with skill that it is useful as a signal.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '7'
+  section: Credentialing Specifics
+- id: q75_signal_pressure_cruelty
+  name: Survey v1 Q7.5 Signal Creates Pressure
+  description: Because the signal is useful, it also creates pressure/cruelty.
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: 1 - Strongly disagree
+  - name: '2'
+  - name: '3'
+  - name: 4 - Neutral
+  - name: '5'
+  - name: '6'
+  - name: 7 - Strongly agree
+  page: '7'
+  section: Credentialing Specifics
+- id: q81_open_worth_it
+  name: 'Survey v1 Q8.1 Open Response: More Worth It'
+  description: 'Open-ended: What is the single biggest thing that would make competitive participation
+    feel more worth it for you right now? Use the comment box.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: I answered in the comment box
+  - name: Skip / no response
+  page: '8'
+  section: Open-Ended Responses
+- id: q82_open_high_stakes
+  name: 'Survey v1 Q8.2 Open Response: High Stakes'
+  description: 'Open-ended (optional): If practice feels high-stakes, what specifically creates that feeling?
+    Use the comment box.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: I answered in the comment box
+  - name: Skip / no response
+  page: '8'
+  section: Open-Ended Responses
+- id: q83_open_not_worth_risk
+  name: 'Survey v1 Q8.3 Open Response: Not Worth The Risk'
+  description: 'Open-ended (optional): Describe a situation where you wanted to play/practice but decided
+    it was not worth the risk. Use the comment box.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: I answered in the comment box
+  - name: Skip / no response
+  page: '8'
+  section: Open-Ended Responses
+- id: q91_follow_up_contact
+  name: Survey v1 Q9.1 Optional Follow-Up Contact
+  description: 'Optional: If you are open to a follow-up interview, leave a Discord handle or contact
+    method in the comment box.'
+  comparison_mode: single_choice
+  shuffle: false
+  options:
+  - name: I answered in the comment box
+  - name: Skip / no response
+  page: '9'
+  section: Follow-Up

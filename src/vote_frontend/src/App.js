@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CategoryList from './components/Categories/CategoryList';
 import VoteContainer from './components/VoteMode/VoteContainer';
 import ResultsContainer from './components/Results/ResultsContainer';
+import SurveyContainer from './components/Survey/SurveyContainer';
 import Header from './components/shared/Header';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <main className="max-w-6xl mx-auto px-6 py-10">
             <Routes>
               <Route path="/" element={<CategoryList />} />
+              <Route path="/survey/:surveyKey" element={<SurveyContainer />} />
               <Route path="/vote/:categoryId" element={<VoteContainer />} />
               <Route path="/results/:categoryId" element={<ResultsContainer />} />
             </Routes>

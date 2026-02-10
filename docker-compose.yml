@@ -9,6 +9,7 @@ x-api-env: &api_env
   DEV_MODE: "true"
   SYNC_ON_STARTUP: "true"
   VOTE_IP_PEPPER: ${VOTE_IP_PEPPER:-dev-pepper}
+  DISCORD_AUTH_BYPASS_IN_DEV: ${DISCORD_AUTH_BYPASS_IN_DEV:-true}
   ADMIN_TOKEN_PEPPER: ${ADMIN_TOKEN_PEPPER:-dev-admin-pepper}
   ADMIN_API_TOKENS_HASHED: ${ADMIN_API_TOKENS_HASHED:-}
 
@@ -38,11 +39,12 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/dockerfile.vote-api
-    command: uvicorn vote_api.app:app --reload --app-dir src --host 0.0.0.0 --port 8001 --reload-dir /app/src/vote_api --reload-dir /app/src/shared_lib
+    command: sh -c "alembic upgrade head && uvicorn vote_api.app:app --reload --app-dir src --host 0.0.0.0 --port 8001 --reload-dir /app/src/vote_api --reload-dir /app/src/shared_lib --reload-dir /app/data"
     user: "${UID:-0}:${GID:-0}"
     environment:
       <<: *api_env
       PYTHONDONTWRITEBYTECODE: "1"
+      WATCHFILES_FORCE_POLLING: "true"
     ports:
       - "8001:8001"
     volumes:

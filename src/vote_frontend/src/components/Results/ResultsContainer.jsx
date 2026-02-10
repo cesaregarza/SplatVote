@@ -6,6 +6,7 @@ import PercentageChart from './PercentageChart';
 import EloRankings from './EloRankings';
 import WilsonConfidence from './WilsonConfidence';
 import TournamentDetails from '../shared/TournamentDetails';
+import Badge from '../shared/Badge';
 
 function ResultsContainer() {
   const { categoryId } = useParams();
@@ -92,8 +93,10 @@ function ResultsContainer() {
       )}
       {isPrivate && (
         <div className="mt-10 text-center">
-          <div className="inline-flex items-center rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-4 py-1 text-xs uppercase tracking-[0.3em] text-fuchsia-200">
-            Results locked
+          <div className="inline-flex items-center">
+            <Badge variant="mode" size="lg">
+              Results locked
+            </Badge>
           </div>
           {category?.comparison_mode === 'tournament_tiers' ? (
             <>

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useVoteAPI } from '../../hooks/useVoteAPI';
 import CategoryCard from './CategoryCard';
+import SurveyCard from './SurveyCard';
 
 function CategoryList() {
   const [categories, setCategories] = useState([]);
@@ -9,6 +10,52 @@ function CategoryList() {
   useEffect(() => {
     fetchCategories().then(setCategories);
   }, [fetchCategories]);
+
+  const surveyEntries = useMemo(() => {
+    const surveysByKey = new Map();
+
+    categories.forEach((category) => {
+      const settings = category.settings || {};
+      const surveyKey = settings.survey_key;
+      if (!surveyKey) {
+        return;
+      }
+
+      if (!surveysByKey.has(surveyKey)) {
+        surveysByKey.set(surveyKey, {
+          key: surveyKey,
+          label: settings.survey_label || surveyKey,
+          questionCount: 0,
+          discordRequired: false,
+          discordReason: null,
+        });
+      }
+
+      const survey = surveysByKey.get(surveyKey);
+      survey.questionCount += 1;
+      survey.discordRequired = survey.discordRequired || Boolean(settings.discord_required);
+      if (!survey.discordReason && settings.discord_reason) {
+        survey.discordReason = settings.discord_reason;
+      }
+      if (settings.survey_label) {
+        survey.label = settings.survey_label;
+      }
+      if (typeof settings.survey_total_questions === 'number' && settings.survey_total_questions > 0) {
+        survey.questionCount = settings.survey_total_questions;
+      }
+    });
+
+    return Array.from(surveysByKey.values()).sort((a, b) => {
+      if (a.label < b.label) return -1;
+      if (a.label > b.label) return 1;
+      return 0;
+    });
+  }, [categories]);
+
+  const regularCategories = useMemo(
+    () => categories.filter((category) => !(category.settings || {}).survey_key),
+    [categories]
+  );
 
   if (loading) {
     return (
@@ -46,12 +93,31 @@ function CategoryList() {
           community weighs in.
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map(category => (
-          <CategoryCard key={category.id} category={category} />
-        ))}
-      </div>
-      {categories.length === 0 && (
+      {surveyEntries.length > 0 && (
+        <div className="mb-10">
+          <h2 className="mb-4 text-sm uppercase tracking-[0.3em] text-sky-200">
+            Surveys
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {surveyEntries.map((survey) => (
+              <SurveyCard key={survey.key} survey={survey} />
+            ))}
+          </div>
+        </div>
+      )}
+      {regularCategories.length > 0 && (
+        <div>
+          <h2 className="mb-4 text-sm uppercase tracking-[0.3em] text-slate-400">
+            Polls
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {regularCategories.map((category) => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
+          </div>
+        </div>
+      )}
+      {surveyEntries.length === 0 && regularCategories.length === 0 && (
         <p className="text-center text-slate-400 py-10">
           No categories available yet.
         </p>

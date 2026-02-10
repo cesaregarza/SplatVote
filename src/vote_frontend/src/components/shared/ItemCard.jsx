@@ -1,4 +1,5 @@
 import React from 'react';
+import Badge from './Badge';
 
 function ItemCard({ item, selected, onClick, disabled }) {
   return (
@@ -32,9 +33,9 @@ function ItemCard({ item, selected, onClick, disabled }) {
       )}
       {selected && (
         <div className="absolute top-2 right-2">
-          <span className="rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-2 py-1 text-[0.65rem] uppercase tracking-wide text-fuchsia-100">
+          <Badge variant="mode" className="text-fuchsia-100">
             Selected
-          </span>
+          </Badge>
         </div>
       )}
     </div>

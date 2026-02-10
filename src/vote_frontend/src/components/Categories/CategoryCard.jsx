@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Badge from '../shared/Badge';
 
 const MODE_LABELS = {
   single_choice: 'Single Choice',
+  multi_select: 'Multi Select',
   elo_tournament: 'Head-to-Head',
   ranked_list: 'Ranked List',
   tournament_tiers: 'Tier Vote',
@@ -12,6 +14,8 @@ function CategoryCard({ category }) {
   const tournament = category?.settings?.tournament;
   const tierLabel = tournament?.tier ? tournament.tier.toUpperCase() : null;
   const privateResults = category?.settings?.private_results;
+  const discordRequired = category?.settings?.discord_required;
+  const discordReason = category?.settings?.discord_reason;
 
   return (
     <div className="group rounded-2xl border border-white/5 bg-slate-900/60 shadow-[0_18px_40px_rgba(2,6,23,0.45)] transition hover:border-fuchsia-500/40">
@@ -22,18 +26,23 @@ function CategoryCard({ category }) {
           </span>
           <div className="flex flex-wrap items-center gap-2">
             {tierLabel && (
-              <span className="rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-fuchsia-200">
+              <Badge variant="mode">
                 {tierLabel}
-              </span>
+              </Badge>
+            )}
+            {discordRequired && (
+              <Badge variant="discord">
+                Discord required
+              </Badge>
             )}
             {privateResults && (
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-200">
+              <Badge>
                 Private results
-              </span>
+              </Badge>
             )}
-            <span className="rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-fuchsia-200">
+            <Badge variant="mode" size="md">
               {MODE_LABELS[category.comparison_mode]}
-            </span>
+            </Badge>
           </div>
         </div>
         <h2 className="text-xl font-semibold text-white mb-2">
@@ -42,6 +51,11 @@ function CategoryCard({ category }) {
         {category.description && (
           <p className="text-slate-300 text-sm mb-4 line-clamp-2">
             {category.description}
+          </p>
+        )}
+        {discordRequired && discordReason && (
+          <p className="text-sky-200/90 text-sm mb-4">
+            Why Discord: {discordReason}
           </p>
         )}
         <div className="flex gap-3">

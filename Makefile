@@ -48,7 +48,7 @@ redis-stop:
 	-$(DOCKER) stop splatvote-redis
 
 backend:
-	$(PYTHON) -m uvicorn vote_api.app:app --reload --app-dir src --host $(API_HOST) --port $(API_PORT)
+	$(PYTHON) -m uvicorn vote_api.app:app --reload --app-dir src --host $(API_HOST) --port $(API_PORT) --reload-dir src/vote_api --reload-dir src/shared_lib --reload-dir data
 
 frontend:
 	cd src/vote_frontend && npm start

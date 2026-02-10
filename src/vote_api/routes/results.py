@@ -40,7 +40,7 @@ async def get_results(
     result = await session.execute(
         select(Category)
         .options(selectinload(Category.category_items).selectinload(CategoryItem.item))
-        .where(Category.id == category_id)
+        .where(Category.id == category_id, Category.is_soft_deleted == False)
     )
     category = result.scalar_one_or_none()
 
@@ -79,7 +79,10 @@ async def get_results(
     }
 
     # Calculate results based on comparison mode
-    if category.comparison_mode == ComparisonMode.SINGLE_CHOICE.value:
+    if category.comparison_mode in (
+        ComparisonMode.SINGLE_CHOICE.value,
+        ComparisonMode.MULTI_SELECT.value,
+    ):
         results = await _calculate_single_choice_results(
             session, category_id, items_by_id, total_votes
         )
