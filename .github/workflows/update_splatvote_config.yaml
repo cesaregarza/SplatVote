@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: splatvote-deploy-${{ github.ref }}
@@ -86,12 +87,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Fetch deployment credentials
+        id: broker
+        uses: cesaregarza/.github/actions/fetch-broker-credentials@main
+        with:
+          broker-url: https://credentials.garz.ai
+          audience: https://credentials.garz.ai/v1
+          capability: digitalocean-k8s-deploy
+
       - name: Log in to DigitalOcean Container Registry
         uses: docker/login-action@v3
         with:
           registry: registry.digitalocean.com
-          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          username: ${{ fromJson(steps.broker.outputs.secrets-json).DIGITALOCEAN_ACCESS_TOKEN }}
+          password: ${{ fromJson(steps.broker.outputs.secrets-json).DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Build & push vote-api image
         uses: docker/build-push-action@v6
@@ -156,11 +165,19 @@ jobs:
       TAG: ${{ needs.build.outputs.image_tag }}
       BRANCH: bot/splatvote-${{ github.run_id }}
     steps:
+      - name: Fetch deployment credentials
+        id: broker
+        uses: cesaregarza/.github/actions/fetch-broker-credentials@main
+        with:
+          broker-url: https://credentials.garz.ai
+          audience: https://credentials.garz.ai/v1
+          capability: config-repo-write
+
       - name: Checkout config repository
         uses: actions/checkout@v4
         with:
           repository: cesaregarza/SplatTopConfig
-          token: ${{ secrets.CONFIG_REPO_TOKEN }}
+          token: ${{ fromJson(steps.broker.outputs.secrets-json).CONFIG_REPO_TOKEN }}
           path: config-repo
           ref: main
 
@@ -204,7 +221,7 @@ jobs:
       - name: Open config repo PR
         if: steps.update.outputs.skip_pr != 'true'
         env:
-          GH_TOKEN: ${{ secrets.CONFIG_REPO_TOKEN }}
+          GH_TOKEN: ${{ fromJson(steps.broker.outputs.secrets-json).CONFIG_REPO_TOKEN }}
         run: |
           set -euo pipefail
           cd config-repo
